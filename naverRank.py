@@ -16,10 +16,13 @@ def get_naver_rank(keywords, target_id):
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     final_report = {}
 
-    def check_current_page_rank(tab="blog"):
+    def check_current_page_rank(target_id, tab="blog"):
         """현재 페이지(홈 또는 블로그탭)에서 광고 제외 순위 탐색"""
-        # 블로그 글 단위 컨테이너 선택 (현재 DOM 구조 기준)
-        items = driver.find_elements(By.CSS_SELECTOR, "div.Rpk3YFQcZBMzoLEWz9U_")
+        # 탭별 컨테이너 클래스 지정
+        if tab == "home":
+            items = driver.find_elements(By.CSS_SELECTOR, "div.IXY3IWbCd9r5_MTsR4qX")
+        else:  # blog
+            items = driver.find_elements(By.CSS_SELECTOR, "div.Rpk3YFQcZBMzoLEWz9U_")
 
         current_rank = 0
         for item in items:
@@ -49,12 +52,12 @@ def get_naver_rank(keywords, target_id):
             # --- [Step 1] 통합 검색(홈) 확인 ---
             driver.get(f"https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query={keyword}")
             time.sleep(2.5)
-            home_rank = check_current_page_rank(tab="home")
+            home_rank = check_current_page_rank(target_id, tab="home")
 
             # --- [Step 2] 블로그 탭 이동 및 확인 ---
             driver.get(f"https://search.naver.com/search.naver?ssc=tab.blog.all&sm=tab_jum&query={keyword}")
             time.sleep(2.5)
-            blog_rank = check_current_page_rank(tab="blog")
+            blog_rank = check_current_page_rank(target_id, tab="blog")
 
             # --- [Step 3] 결과 비교 및 저장 ---
             best = min(home_rank, blog_rank)
