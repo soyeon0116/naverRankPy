@@ -76,7 +76,10 @@ def get_naver_rank(keywords, target_id):
 
 if __name__ == "__main__":
     MY_ID = "300bank"  # 내 블로그 ID
-    KEYWORD_LIST = ["스마트워치KC인증", "속눈썹고데기KC인증", "에어컨KC인증"]
+
+    # keywords.txt 파일에서 줄 단위로 읽어서 리스트 생성
+    with open(r"\keywords.txt", "r", encoding="utf-8") as f:
+        KEYWORD_LIST = [line.strip() for line in f if line.strip()]
 
     results = get_naver_rank(KEYWORD_LIST, MY_ID)
 
@@ -86,3 +89,13 @@ if __name__ == "__main__":
     for kw, rk in results.items():
         print(f"{kw.ljust(15)} : {rk}")
     print("="*40)
+
+    # 결과를 메모장(txt 파일)으로 저장
+    with open(r"\result.txt", "w", encoding="utf-8") as f:
+        f.write("📊 최종 순위 결과 보고 (광고 제외)\n")
+        f.write("="*40 + "\n")
+        for kw, rk in results.items():
+            f.write(f"{kw.ljust(15)} : {rk}\n")
+        f.write("="*40 + "\n")
+
+    print("\n결과가 result.txt 파일로 저장되었습니다 ✅")
